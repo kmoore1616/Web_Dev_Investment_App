@@ -31,8 +31,8 @@ def create():
     if request.method == 'GET':
         return render_template('create.html')
     elif request.method == 'POST':
-        username = request.form['swimmer']
-        password = request.form['height']
+        username = request.form['username']
+        password = request.form['password']
         user = User(username=username, password=password)
         db.session.add(user)
         db.session.commit()
