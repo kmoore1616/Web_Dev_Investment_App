@@ -1,0 +1,25 @@
+@app.route('/create', methods=["GET", "POST"])
+def create():
+    if current_user.is_authenticated:   # Safety Stuff
+        return redirect("/")
+
+    if request.method=="GET":
+        return render_template("create.html", is_authenticated=current_user.is_authenticated, error_msg = False)
+    else:
+        name = request.form['name']
+        username = request.form['username']
+        password = request.form['password']
+        age = request.form['age']
+
+        user = User(username=username)  # Create new instance
+        user.name=name
+        user.password = password
+        user.age = age
+        db.session.add(user)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return render_template("create.html", is_authenticated=current_user.is_authenticated, error_msg = True)
+        login_user(user)
+        return redirect("/")
