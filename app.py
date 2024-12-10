@@ -37,3 +37,11 @@ def create():
         db.session.add(user)
         db.session.commit()
         return render_template('portfolio.html')
+
+@app.route('/delete/<id>', methods=['POST'])
+def delete(id):
+    portfolio_id = int(id)
+    user = User.query.filter_by(id=portfolio_id).first()
+    db.session.delete(user)
+    db.session.commit()
+    return render_template('portfolio.html')
