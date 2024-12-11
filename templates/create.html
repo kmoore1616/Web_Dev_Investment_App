@@ -1,25 +1,17 @@
-@app.route('/create', methods=["GET", "POST"])
-def create():
-    if current_user.is_authenticated:   # Safety Stuff
-        return redirect("/")
+{% extends "base.html" %}
+{% block body %}
+{% if error_msg %}
+                <h2> Username already exists! <h2><br>
+{% endif %}
+<form action="/create" method="POST">
+                Name:     <input type="text" name="name"><br>
+                Age:      <input type="text" name="age"><br>
+                Username: <input type="text" name="username"><br>
+                Password: <input type="password" name="password"><br>
+                <input type="submit" value="CREATE ACCOUNT">
+</form>
 
-    if request.method=="GET":
-        return render_template("create.html", is_authenticated=current_user.is_authenticated, error_msg = False)
-    else:
-        name = request.form['name']
-        username = request.form['username']
-        password = request.form['password']
-        age = request.form['age']
 
-        user = User(username=username)  # Create new instance
-        user.name=name
-        user.password = password
-        user.age = age
-        db.session.add(user)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            return render_template("create.html", is_authenticated=current_user.is_authenticated, error_msg = True)
-        login_user(user)
-        return redirect("/")
+
+
+{% endblock %}
