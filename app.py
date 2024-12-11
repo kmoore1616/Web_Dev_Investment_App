@@ -8,18 +8,18 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'stocks.sqlite'
 app.config['SECRET_KEY'] = "act07-app1.py.pngDownload act07-app1.py.png (282 KB)"
 db = SQLAlchemy(app)
 
-class user(db.Model):
+class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String)
     password = db.Column(db.String)
 
-class portfolio(db.Model):
+class Portfolio(db.Model):
     portfolio_id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String)
     cash = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     
-class stock(db.Model):
+class Stock(db.Model):
     stock_id = db.Column(db.Integer,primary_key=True)
     symbol = db.Column(db.String)
     amount = db.Column(db.Integer)
