@@ -26,22 +26,70 @@ class stock(db.Model):
     price_purchased = db.Column(db.Integer)
     portfolio_id =  db.Column(db.Integer, db.ForeignKey('portfolio.portfolio_id'))
 
-@app.route('/create', methods =['POST','GET'])
-def create():
+@app.route('/create_user', methods =['POST','GET'])
+def create_user():
     if request.method == 'GET':
         return render_template('create.html')
     elif request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form['swimmer']
+        password = request.form['height']
         user = User(username=username, password=password)
         db.session.add(user)
         db.session.commit()
         return render_template('portfolio.html')
+    
+@app.route('/create_stock', methods =['POST','GET'])
+def create_stock():
+    if request.method == 'GET':
+        return render_template('create.html')
+    elif request.method == 'POST':
+        symbol = request.form['symbol']
+        amount = request.form['amount']
+        cash = request.form['cash']
+        stock = Stock(symbol=symbol, amount=amount, cash=cash)
+        db.session.add(stock)
+        db.session.commit()
+        return render_template('portfolio.html')
 
-@app.route('/delete/<id>', methods=['POST'])
-def delete(id):
+@app.route('/update_user/<id>', methods = ['GET','POST'])
+def update_portfolio(id):
     portfolio_id = int(id)
-    user = User.query.filter_by(id=portfolio_id).first()
-    db.session.delete(user)
+    portfolio = Portfolio.query.filter_by(id=portfolio_id).first()
+    if request.method == 'GET':
+        return render_template('update.html',portfolio=portfolio)
+    elif request.method == 'POST':
+        name = request.form['name']
+        cash = request.form['cash']
+        
+        portfolio.name = name
+        portfolio.cash = cash
+        db.session.commit()
+        return render_template('portfolio.html')
+
+@app.route('/update_stock/<id>', methods=['GET', 'POST'])
+def update_stock(id):
+    stock_id = int(id)
+    stock = Stock.query.filter_by(id=stock_id).first()
+    if request.method == 'GET':
+        return render_template('update.html', stock=stock)
+    elif request.method == 'POST':
+        symbol = request.form['symbol']
+        amount = request.form['amount']
+        price_purchased = request.form['price_purchased']
+
+        stock.symbol = symbol
+        stock.amount = amount
+        stock.price_purchased = price_purchased
+        db.session.commit()
+        return render_template('portfolio.html')
+
+@app.route('/delete_stock/<id>', methods=['POST'])
+def delete_stock(id):
+    stock_id = int(id)
+    stock = Stock.query.filter_by(id=stock_id).first()
+    db.session.delete(stock)
     db.session.commit()
     return render_template('portfolio.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)
