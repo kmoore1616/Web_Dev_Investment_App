@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block body %}
+
+<h1>Welcome to your Portfolio!</h1><br>
+<h1>Current Gain
+<br>
+
+Current Cash: ${{portfolio.cash}}<br>
+Add Cash to Portfolio: <input type="text" id="cash_add">
+<input type="submit" value="DEPOSIT" onclick="deposit">
+Withdraw Cash: <input type="text" id="cash_remove">
+<input type="submit" value="WITHDRAW" onclick="withdraw()">
+<br>
+
+<h2>Positions:</h2><br>
+{% for position in portfolio %}
+<tr>
+		<td>Symbol: {{portfolio[i].symbol}} </td>
+		<td>Shares: {{portfolio[i].shares}} </td>
+		<td>Current Price: {{portfolio[i].price}} </td>
+		<td style={{portfolio.color}}>Current Profit: {{portfolio[i].proft}} </td>
+</tr>
+{% endfor %}
+{% endblock %}
