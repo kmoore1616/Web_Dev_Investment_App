@@ -1,0 +1,5 @@
+nav ul li {display:inline;}
+nav ul {list-style-type:none;}
+table,td,tr,th {border: 1px solid;}
+table {border-collapse: collapse;}
+
