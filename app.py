@@ -23,7 +23,7 @@ class Stock(db.Model):
     stock_id = db.Column(db.Integer,primary_key=True)
     symbol = db.Column(db.String)
     amount = db.Column(db.Integer)
-    price_purchased = db.Column(db.Integer)
+    date_purchased = db.Column(db.Integer)    # This is important to find gains/losses from a stock. Im not sure how sqlite formats dates
     portfolio_id =  db.Column(db.Integer, db.ForeignKey('portfolio.portfolio_id'))
 
 @app.route('/create_user', methods =['POST','GET'])
