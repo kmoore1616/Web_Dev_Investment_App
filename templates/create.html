@@ -1,16 +1,15 @@
-{% extends "base.html" %}
-{% block body %}
-{% if error_msg %}
-                <h2> Username already exists! <h2><br>
-{% endif %}
-<form action="/create" method="POST">
-                Name:     <input type="text" name="name"><br>
-                Username: <input type="text" name="username"><br>
-                Password: <input type="password" name="password"><br>
-                <input type="submit" value="CREATE ACCOUNT">
-</form>
+    {% extends "base.html" %}
+    {% block body %}
+    {% if error_msg %}
+    
+    {% endif %}
+    <h2> Username already exists! </h2><br>
+    <form action="/create" method="POST">
+        Name: <input type="text" name="name"><br>
+        Username: <input type="text" name="username"><br>
+        Password: <input type="password" name="password"><br>
+        <input type="submit" value="CREATE ACCOUNT">
+    </form>
+        
+    {% endblock %}
 
-
-
-
-{% endblock %}
