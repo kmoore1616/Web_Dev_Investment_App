@@ -2,15 +2,14 @@ from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, UserMixin, logout_user, current_user
 from sqlalchemy.exc import IntegrityError
-from flask_socketio import SocketIO, send, emit
 from dataclasses import dataclass
+from requests import Request
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///stocks.sqlite'
 app.config['SECRET_KEY'] = "act07-app1.py.pngDownload act07-app1.py.png (282 KB)"
 db = SQLAlchemy(app)
 
-socketio = SocketIO(app)
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
@@ -103,7 +102,7 @@ class Stock(db.Model):
     stock_id = db.Column(db.Integer,primary_key=True)
     symbol = db.Column(db.String)
     amount = db.Column(db.REAL)
-    date_purchased = db.Column(db.String)    # This is important to find gains/losses from a stock. Im not sure how sqlite formats dates
+    date_purchased = db.Column(db.String) #"2021-11-11"    # This is important to find gains/losses from a stock. Im not sure how sqlite formats dates
     portfolio_id =  db.Column(db.Integer, db.ForeignKey('portfolio.portfolio_id'))
 
     def get_id(self):
@@ -203,14 +202,27 @@ def delete_stock(id):
 @app.route("/portfolio", methods=["GET", "POST"])
 @login_required
 def portfolio():
-    stocks = get_stocks()
     user_portfolio = Portfolio.query.filter_by(portfolio_id=current_user.user_id).first() # Get user portfolio
-    total_profit = 0
-    for stock in stocks:
-        total_profit += stock.profit
-    print(stocks)
+    if request.method == "GET":
+        stocks = get_stocks()
+        total_profit = 0.0
+        for stock in stocks:
+            total_profit += stock.profit
+        return render_template("portfolio.html", stocks = stocks, cash = user_portfolio.cash, total_profit = total_profit)
+    elif request.form.get("value") == "deposit":
+        user_portfolio.cash += float(request.form["deposit"])
+        db.session.commit()
+        return redirect("portfolio")
+    elif request.form.get("name") == "deposit":
+        user_portfolio.cash -= float(request.form["withdraw"])
+        db.session.commit()
+        return redirect("portfolio")
+    else:
+        print("Udumb")
+        return redirect("portfolio")
 
-    return render_template("portfolio.html", stocks = stocks, cash = user_portfolio.cash, total_profit = total_profit)
+
+
 
 
 # "/" route not used, redirects to login. If logged in, redirects to portfolio (FINISHED)
@@ -255,11 +267,6 @@ def logout():
 def e404(err):
     return render_template("404.html")
 
-@socket.on("deposit")
-def deposit(amount):
-
-
-
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    app.run(debug=True)
