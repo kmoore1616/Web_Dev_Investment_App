@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, login_user, login_required, UserMixin, logout_user, current_user
-from sqlalchemy.exc import IntegrityError
 from dataclasses import dataclass
-from requests import Request
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///stocks.sqlite'
@@ -13,7 +11,6 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
 login_manager.init_app(app)
-
 
 @dataclass
 class Stock_struct:
