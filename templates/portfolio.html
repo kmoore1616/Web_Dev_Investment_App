@@ -1,23 +1,40 @@
 {% extends "base.html" %}
 {% block body %}
 
-<h1>Welcome to your Portfolio!</h1><br>
+                <h1>Welcome to your Portfolio!</h1>
 
-Current Cash: ${{portfolio.cash}}<br>
+                <h2>Current Cash: ${{cash}}</h2>
+                <h2>Current Profit: ${{total_profit}}</h2>
 
-Add Cash to Portfolio: <input type="text" id="cash_add">
-<input type="submit" value="DEPOSIT" onclick="deposit"><br>
-Withdraw Cash: <input type="text" id="cash_remove">
-<input type="submit" value="WITHDRAW" onclick="withdraw()">
-<br>
 
-<h2>Positions:</h2><br>
-{% for stock in portfolio  %}
-<tr>
-                <td>Symbol: {{stock.symbol}} </td>
-                <td>Shares: {{stock.shares}} </td>
-                <td>Current Price: {{stock.price}} </td>
-                <td style={{stock.color}}>Current Profit: {{stock.proft}} </td>
-</tr>
-{% endfor % }
+                Add Cash to Portfolio: <input type="text" id="cash_add">
+                <input type="submit" value="DEPOSIT" onclick= "deposit()"><br>
+                Withdraw Cash: <input type="text" id="cash_remove">
+                <input type="submit" value="WITHDRAW" onclick= "withdraw()">
+                <br>
+                <br>
+
+
+                <h2>Positions:</h2><br>
+
+                <table>
+                {% if not not stocks %}
+                                {% for stock in stocks  %}
+                                        <tr>
+                                                                <td>Symbol: {{stock.symbol}} </td>
+                                                        <td>Shares: {{stock.shares}} </td>
+                                                        <td>Current Price: ${{stock.price}} </td>
+                                                        {% if stock.profit > 0 %}
+                                                                        <td style="green">Current Profit: ${{stock.profit}} </td>
+                                                        {%else%}
+                                                                        <td style="red">Current Profit: ${{stock.profit}} </td>
+                                                        {%endif%}
+                                        </tr>
+
+                                {% endfor %}
+                                </table>
+                {% endif %}
+
+
+
 {% endblock %}
