@@ -199,24 +199,40 @@ def delete_stock(id):
 @app.route("/portfolio", methods=["GET", "POST"])
 @login_required
 def portfolio():
-    user_portfolio = Portfolio.query.filter_by(portfolio_id=current_user.user_id).first() # Get user portfolio
+    user_portfolio = Portfolio.query.filter_by(portfolio_id=current_user.user_id).first()
+
     if request.method == "GET":
         stocks = get_stocks()
-        total_profit = 0.0
-        for stock in stocks:
-            total_profit += stock.profit
-        return render_template("portfolio.html", stocks = stocks, cash = user_portfolio.cash, total_profit = total_profit)
-    elif request.form.get("value") == "deposit":
-        user_portfolio.cash += float(request.form["deposit"])
-        db.session.commit()
-        return redirect("portfolio")
-    elif request.form.get("name") == "deposit":
-        user_portfolio.cash -= float(request.form["withdraw"])
-        db.session.commit()
-        return redirect("portfolio")
-    else:
-        print("Udumb")
-        return redirect("portfolio")
+        total_profit = sum(stock.profit for stock in stocks)
+        return render_template("portfolio.html", stocks=stocks, cash=user_portfolio.cash, total_profit=total_profit)
+
+    if request.method == "GET":
+        if request.form.get("value") == "deposit":
+            deposit_amount = float(request.form["deposit"])
+            user_portfolio.cash += deposit_amount
+            db.session.commit()
+            stocks = get_stocks()
+            total_profit = sum(stock.profit for stock in stocks)
+            print(total_profit)
+            return render_template("portfolio.html", stocks=stocks, cash=user_portfolio.cash, total_profit=total_profit)
+
+        elif request.form.get("value") == "withdraw":
+            try:
+                withdraw_amount = float(request.form["withdraw"])
+                if withdraw_amount <= user_portfolio.cash:
+                    user_portfolio.cash -= withdraw_amount
+                    db.session.commit()
+                else:
+                    print("Insufficient funds for withdrawal.")
+            except ValueError:
+                print("Invalid withdrawal value.")
+
+            stocks = get_stocks()
+            total_profit = sum(stock.profit for stock in stocks)
+            print("money withdrew")
+            return render_template("portfolio.html", stocks=stocks, cash=user_portfolio.cash, total_profit=total_profit)
+
+    return render_template("portfolio.html")
 
 
 
