@@ -211,15 +211,17 @@ def portfolio():
     elif request.form.get("action") == "deposit":
         user_portfolio.cash += float(request.form["cash_add"])
         db.session.commit()
-        return redirect("portfolio")
+        return redirect("/portfolio")
     elif request.form.get("action") == "withdraw":
-        user_portfolio.cash -= float(request.form["cash_remove"])
-        db.session.commit()
-        return redirect("portfolio")
-
-
-
-
+        try:
+            withdraw_amount = float(request.form["cash_remove"])
+            if withdraw_amount <= user_portfolio.cash:
+                user_portfolio.cash -= float(request.form["cash_remove"])
+                db.session.commit()
+            elif  withdraw_amount >= user_portfolio.cash:
+                print("U Too Broke")
+        finally:
+            return redirect("/portfolio")
 
 # "/" route not used, redirects to login. If logged in, redirects to portfolio (FINISHED)
 @app.route("/")
