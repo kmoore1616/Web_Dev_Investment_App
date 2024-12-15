@@ -229,9 +229,9 @@ def portfolio():
         return redirect("/portfolio")
 
 
-    # ============ TRADE ==========================
+    # ============ TRADE-BUY ==========================
 
-    elif request.form.get("action") == "trade":
+    elif request.form.get("action") == "buy":
         cur_date = date.today()     # Grab current date
         if(cur_date.weekday() >= 5):    # Determine if it's a valid trading day
             flash("Markets Closed")     # If not inform user
@@ -244,6 +244,11 @@ def portfolio():
             return redirect("/portfolio")
         response = requests.get(f"https://api.stockdata.org/v1/data/quote?symbols={symbol}&api_token={key}").json() # Make API call to get most recent price
         price = float(response['data'][0]['price'])     # Get price from response
+        try:
+            price = float(response['data'][0]['price'])     # Get price from response
+        except:
+            flash("Error, stock not found...")      # If stock doesnt exist inform user
+            return redirect("/portfolio")
         cost = price*amount     # Calculate how much it will cost the user
         if(cost > user_portfolio.cash):
             flash("Not Enough Cash to Complete Trade!") # If too much inform user & re-render
@@ -252,6 +257,36 @@ def portfolio():
         new_stock = Stock(symbol=symbol, amount=amount, date_purchased=cur_date, portfolio_id=user_portfolio.portfolio_id)  # Add new stock to user's portfolio
         db.session.add(new_stock)
         db.session.commit() # Commit changes to DB
+
+
+    # ============ TRADE-SELL ==========================
+    elif request.form.get("action") == "sell":
+        cur_date = date.today()     # Grab current date
+        if(cur_date.weekday() >= 5):    # Determine if it's a valid trading day
+            flash("Markets Closed")     # If not inform user
+            return redirect("/portfolio")   # and re-render page
+        symbol = request.form.get("symbolTS") # If valid trading day get user's input
+        stock_TS = Stock.query.filter_by(portfolio_id=user_portfolio.portfolio_id, symbol = symbol).first()
+        if stock_TS is None:
+            flash("Stock not found, check your spelling...")    # If stock not in portfolio inform user
+            return redirect("/portfolio")
+        try:
+            amount = float(request.form.get("amountTS"))  # Make sure input is valid
+        except:
+            flash("Invalid input!") # If not inform user and re-render
+            return redirect("/portfolio")
+        response = requests.get(f"https://api.stockdata.org/v1/data/quote?symbols={symbol}&api_token={key}").json() # Make API call to get most recent price
+        price = float(response['data'][0]['price'])     # Get price from response
+        holdings = price * stock_TS.amount      # Calculate how much user owns
+        cost = price * amount       # Calculate how much user wants to sell
+        if cost > holdings:     # Make sure user cant sell more than they have
+            flash("Cost exceeds current holdings...")   # Inform user if they do
+            return redirect("/portfolio")
+        shares = amount/price   # Calculate how many shares user will sell
+        stock_TS.amount -= shares   # Subtract that from their portfolio
+        user_portfolio.cash += cost
+        db.session.commit()
+
     else:
         return redirect("/portfolio")
 
