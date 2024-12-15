@@ -1,44 +1,49 @@
 {% extends "base.html" %}1
 {% block body %}
 
-                <h1>Welcome to your Portfolio!</h1>
+<h1>Welcome to your Portfolio {{ name }}!</h1>
 
-                <h2>Current Cash: ${{cash}}</h2>
-                <h2>Current Profit: ${{total_profit}}</h2>
+<h2>Current Cash: ${{cash}}</h2>
+<h2>Current Profit: ${{total_profit}}</h2>
 
-                <form action="/portfolio" method="POST" >
-                                Add Cash to Portfolio: $<input type="text" name="cash_add">
-                                <input type="hidden" name="action" value="deposit">
-                                <input type="submit" value="DEPOSIT" name="deposit"><br>
-                </form>
-                <form action="/portfolio" method="POST">
-                                Withdraw Cash: $<input type="text" name="cash_remove">
-                                <input type="hidden" name="action" value="withdraw">
-                                <input type="submit" value="WITHDRAW" name="withdraw">
-                </form>
-                <br>
-                <br>
+<form action="/portfolio" method="POST" >
+Add Cash to Portfolio: $<input type="text" name="cash_add">
+<input type="hidden" name="action" value="deposit">
+<input type="submit" value="DEPOSIT" name="deposit"><br>
+</form>
+<form action="/portfolio" method="POST">
+Withdraw Cash: $<input type="text" name="cash_remove">
+<input type="hidden" name="action" value="withdraw">
+<input type="submit" value="WITHDRAW" name="withdraw">
+</form>
+<br>
+<h2>Buy Stocks!</h2>
+<form action="/portfolio" method="POST">
+Symbol<input type="text" name="symbol">
+Amount USD $<input type="text" name="amount">
+<input type="hidden" name="action" value="trade">
+<input type="submit" value="Submit Trade">
+</form>
 
+<h2>Positions:</h2><br>
 
-                <h2>Positions:</h2><br>
+<table>
+{% if not not stocks %}
+{% for stock in stocks  %}
+<tr>
+<td>Symbol: {{stock.symbol}} </td>
+<td>Shares: {{stock.shares}} </td>
+<td>Current Price: ${{stock.price}} </td>
+{% if stock.profit > 0 %}
+<td style="color: green;">Current Profit: ${{stock.profit}} </td>
+{%else%}
+<td style="color: red;">Current Profit: ${{stock.profit}} </td>
+{%endif%}
+</tr>
 
-                <table>
-                {% if not not stocks %}
-                                {% for stock in stocks  %}
-                                        <tr>
-                                                                <td>Symbol: {{stock.symbol}} </td>
-                                                        <td>Shares: {{stock.shares}} </td>
-                                                        <td>Current Price: ${{stock.price}} </td>
-                                                        {% if stock.profit > 0 %}
-                                                                        <td style="color: green;">Current Profit: ${{stock.profit}} </td>
-                                                        {%else%}
-                                                                        <td style="color: red;">Current Profit: ${{stock.profit}} </td>
-                                                        {%endif%}
-                                        </tr>
-
-                                {% endfor %}
-                                </table>
-                {% endif %}
+{% endfor %}
+</table>
+{% endif %}
 
 
 
