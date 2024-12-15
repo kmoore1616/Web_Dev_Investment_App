@@ -21,7 +21,17 @@ Withdraw Cash: $<input type="text" name="cash_remove">
 <form action="/portfolio" method="POST">
 Symbol<input type="text" name="symbol">
 Amount USD $<input type="text" name="amount">
-<input type="hidden" name="action" value="trade">
+<input type="hidden" name="action" value="buy">
+<input type="submit" value="Submit Trade">
+</form>
+
+
+<br>
+<h2>Sell Stocks!</h2>
+<form action="/portfolio" method="POST">
+Symbol<input type="text" name="symbolTS">
+Amount USD $<input type="text" name="amountTS">
+<input type="hidden" name="action" value="sell">
 <input type="submit" value="Submit Trade">
 </form>
 
