@@ -185,7 +185,25 @@ def logout():
     logout_user()
     return render_template("logout.html")
 
+@app.route('/update', methods=['POST','GET'])
+@login_required
+def update():
+    if request.method == "GET":
+        return render_template('update.html')
+    elif request.method == "POST":
+        current_password = request.form['current_password']
+        new_password = request.form['new_password']
 
+        user = User.query.filter_by(username=current_user.username).first()
+        if user is None:
+            return redirect('/')
+
+        if user.password == current_password:
+            user.password = new_password
+            db.session.commit()
+            return redirect('/')
+        else:
+            return "incorrect current password"
 
 
 # Main route that is show relavant data to user. User can deposit/withdraw money & Invest in stocks & see current holdings
