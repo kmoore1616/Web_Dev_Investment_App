@@ -2,7 +2,7 @@ body { background-color: darkkhaki;
       color: darkOrange;}
 nav ul li {display:inline;}
 nav ul {list-style-type:none;}
-table,td,tr,th { background-color: firebrick;
-                border: 1px solid indigo;}
+table,td,tr,th { background-color: darkOrchid;
+                border: 1px solid CornFlowerBlue;}
 table { bcakground-color: DarkGoldenRod 
 border-collapse: collapse;}
