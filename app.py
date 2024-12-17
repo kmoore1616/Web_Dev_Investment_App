@@ -11,6 +11,9 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.init_app(app)
 
+# Api Key 3
+key = "IjuOtddxWVxFdUSP4Hy9e2kyyIPAoG3jj32zdNmp"
+
 
 class User(UserMixin, db.Model):    # User Table
     id = db.Column(db.Integer, primary_key=True)
